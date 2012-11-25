@@ -11,7 +11,6 @@
 #if !defined(_BINYO_IO_H_)
 #define _BINYO_IO_H_
 
-#include "binyo-os.h"
 #include "binyo-io-buffer.h"
 
 extern ID sBinyo_ID_READ, sBinyo_ID_SEEK, sBinyo_ID_WRITE, sBinyo_ID_CLOSE;
@@ -61,6 +60,14 @@ struct binyo_outstream_interface_st {
     void (*mark)(binyo_outstream*);
     void (*free)(binyo_outstream*);
 };
+
+#ifdef _WIN32
+#define binyo_last_sys_error()	GetLastError()
+#define binyo_clear_sys_error()	SetLastError(0)
+#else
+#define binyo_last_sys_error()	errno
+#define binyo_clear_sys_error()	errno=0
+#endif
 
 #define binyo_safe_cast_stream(out, in, t, ptype, stype)	        \
     do {	                					\
