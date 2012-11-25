@@ -11,6 +11,7 @@
 #if !defined(_BINYO_IO_H_)
 #define _BINYO_IO_H_
 
+#include "binyo-missing.h"
 #include "binyo-io-buffer.h"
 
 extern ID sBinyo_ID_READ, sBinyo_ID_SEEK, sBinyo_ID_WRITE, sBinyo_ID_CLOSE;
