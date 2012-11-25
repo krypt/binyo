@@ -93,8 +93,8 @@ int_do_read(binyo_instream_seq *in, uint8_t *buf, size_t len)
 	buf += read;
     }
 
-    if (read < -1) return -2;
-    if (total == 0) return -1;
+    if (read < -1) return BINYO_IO_READ_ERR;
+    if (total == 0) return BINYO_IO_READ_EOF;
     return total;
 }
 
@@ -107,15 +107,15 @@ int_seq_read(binyo_instream *instream, uint8_t *buf, size_t len)
 
     int_safe_cast(in, instream);
 
-    if (!buf) return -2;
+    if (!buf) return BINYO_IO_READ_ERR;
 
     while (total < len) {
     	read = int_do_read(in, buf, len - total);
-	if (read < -1) return -2;
+	if (read < -1) return BINYO_IO_READ_ERR;
 	if (read == -1) {
 	    in->i++;
 	    if (in->i == in->num) {
-		return -1;
+		return BINYO_IO_READ_EOF;
 	    }
 	    else {
 		in->active = in->streams[in->i];

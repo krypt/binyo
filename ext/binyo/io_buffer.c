@@ -10,6 +10,7 @@
 
 #include "binyo-io-buffer.h"
 #include "binyo-error.h"
+#include "binyo-error-internal.h"
 
 binyo_byte_buffer *
 binyo_buffer_new(void)
@@ -49,14 +50,14 @@ int_buffer_grow(binyo_byte_buffer *buffer, size_t cur_len)
 
     if (buffer->prealloc) {
 	binyo_error_add("Cannot grow preallocated buffer");
-	return 0;
+	return BINYO_ERR;
     }
 
     if (buffer->data == NULL) {
 	size_t alloc_size = buffer->init_size > cur_len ? buffer->init_size : cur_len;
 	buffer->data = ALLOC_N(uint8_t, alloc_size);
 	buffer->limit = alloc_size;
-	return 1;
+	return BINYO_OK;
     }
 
     /* avoid infinite loop for limit == 1 */
@@ -65,26 +66,26 @@ int_buffer_grow(binyo_byte_buffer *buffer, size_t cur_len)
     while (new_size - buffer->size < cur_len) {
 	if (new_size >= BINYO_BUF_MAX) {
 	    binyo_error_add("Cannot grow buffer");
-	    return 0;
+	    return BINYO_ERR;
 	}
     	new_size *= BINYO_BYTE_BUFFER_GROWTH_FACTOR;
     }
 
     REALLOC_N(buffer->data, uint8_t, new_size);
     buffer->limit = new_size; 
-    return 1;
+    return BINYO_OK;
 }
 
 ssize_t
 binyo_buffer_write(binyo_byte_buffer *buffer, uint8_t *b, size_t len)
 {
-    if (!b) return -1;
+    if (!b) return BINYO_IO_WRITE_ERR;
     if (len == 0) return 0;
-    if (len > SSIZE_MAX) return -1;
+    if (len > SSIZE_MAX) return BINYO_IO_WRITE_ERR;
 
     if (buffer->limit - buffer->size < len) {
 	if (!int_buffer_grow(buffer, len))
-	    return -1;
+	    return BINYO_IO_WRITE_ERR;
     }
 
     memcpy(buffer->data + buffer->size, b, len);

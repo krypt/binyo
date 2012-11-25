@@ -69,7 +69,7 @@ int_fd_write(binyo_outstream *outstream, uint8_t *buf, size_t len)
    
     int_safe_cast(out, outstream); 
 
-    if (!buf) return -1;
+    if (!buf) return BINYO_IO_WRITE_ERR;
 
     fd = out->fd;
     binyo_clear_sys_error();
@@ -78,7 +78,7 @@ int_fd_write(binyo_outstream *outstream, uint8_t *buf, size_t len)
     
     if (w < 0) {
 	binyo_add_io_error();
-	return -1;
+	return BINYO_IO_WRITE_ERR;
     }
     else {
     	return w;
