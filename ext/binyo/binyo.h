@@ -26,6 +26,7 @@ extern "C" {
 #include <ruby/io.h>
 #endif
 
+
 /* memory utilities */
 #define BINYO_ALLOC(type) ((type *)binyo_alloc(sizeof(type)))
 #define BINYO_ALLOC_N(type, n) ((type *)binyo_alloc_n((n), sizeof(type)))
@@ -39,6 +40,8 @@ void *binyo_realloc_n(void *ptr, size_t n, size_t size);
 void binyo_free(void *ptr);
 
 /* include headers */
+#include "binyo-error.h"
+#include "binyo-io.h"
 #include "bytelist.h"
 #include "byte.h"
 
@@ -52,5 +55,4 @@ void Init_binyo(void);
 #endif
 
 #endif /* _BINYO_H_ */
-
 
