@@ -14,7 +14,6 @@
 #include "binyo-io-buffer.h"
 
 extern ID sBinyo_ID_READ, sBinyo_ID_SEEK, sBinyo_ID_WRITE, sBinyo_ID_CLOSE;
-extern ID sBinyo_IV_IO, sBinyo_IV_IO_ADAPTER;
 
 extern VALUE sBinyo_ID_SEEK_CUR, sBinyo_ID_SEEK_SET, sBinyo_ID_SEEK_END;
 
@@ -86,7 +85,6 @@ struct binyo_outstream_interface_st {
 #define binyo_safe_cast_instream(out, in, type, ptrtype)	binyo_safe_cast_stream((out), (in), (type), ptrtype, binyo_instream)
 
 void binyo_add_io_error(void);
-void binyo_instream_rb_size_buffer(VALUE *str, size_t len);
 
 ssize_t binyo_instream_read(binyo_instream *in, uint8_t *buf, size_t len);
 int binyo_instream_rb_read(binyo_instream *in, VALUE vlen, VALUE vbuf, VALUE *out);
