@@ -57,13 +57,13 @@ int_io_write(binyo_outstream *outstream, uint8_t *buf, size_t len)
     VALUE vbuf, ret;
     int w;
 
-    if (!buf) return -1;
+    if (!buf) return BINYO_IO_WRITE_ERR;
 
     vbuf = rb_str_new((const char *)buf, len);
     w = int_io_rb_write(outstream, vbuf, &ret);
     if (!w) {
 	binyo_error_add("Error while writing to IO");
-	return -1;
+	return BINYO_IO_WRITE_ERR;
     }
     return NUM2LONG(ret);
 }
@@ -89,7 +89,7 @@ int_io_rb_write(binyo_outstream *outstream, VALUE vbuf, VALUE *ret)
     rb_ary_push(args, out->io);
     rb_ary_push(args, vbuf);
     *ret = rb_protect(int_io_rb_protected_write, args, &state);
-    return state == 0;
+    return state == 0 ? BINYO_OK : BINYO_ERR;
 }
 
 static void

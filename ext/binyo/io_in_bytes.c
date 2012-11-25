@@ -72,12 +72,12 @@ int_bytes_read(binyo_instream *instream, uint8_t *buf, size_t len)
 
     int_safe_cast(in, instream);
 
-    if (!buf) return -2;
+    if (!buf) return BINYO_IO_READ_ERR;
 
     src = in->src;
 
     if (in->num_read == src->len)
-	return -1;
+	return BINYO_IO_READ_EOF;
 
     to_read = src->len - in->num_read < len ? src->len - in->num_read : len;
     memcpy(buf, src->p, to_read);
@@ -100,7 +100,7 @@ int_bytes_gets(binyo_instream *instream, char *line, size_t len)
     src = in->src;
 
     if (in->num_read == src->len)
-	return -1;
+	return BINYO_IO_READ_EOF;
 
     d = line;
     to_read = src->len - in->num_read < len ? src->len - in->num_read : len;
@@ -131,11 +131,11 @@ int_bytes_set_pos(binyo_instream_bytes *in, off_t offset, size_t num_read)
 
     if (src->len - offset <= num_read) {
 	binyo_error_add("Unreachable seek position");
-	return 0;
+	return BINYO_ERR;
     }
     src->p += offset;
     in->num_read += offset;
-    return 1;
+    return BINYO_OK;
 }
 
 /* TODO check overflow */
@@ -160,7 +160,7 @@ int_bytes_seek(binyo_instream *instream, off_t offset, int whence)
 	    return int_bytes_set_pos(in, offset + src->len - num_read, num_read);
 	default:
 	    binyo_error_add("Unknown whence: %d", whence);
-	    return 0;
+	    return BINYO_ERR;
     }
 }
 

@@ -26,21 +26,20 @@ extern "C" {
 #include <ruby/io.h>
 #endif
 
+#include "binyo-missing.h"
 
-/* memory utilities */
-#define BINYO_ALLOC(type) ((type *)binyo_alloc(sizeof(type)))
-#define BINYO_ALLOC_N(type, n) ((type *)binyo_alloc_n((n), sizeof(type)))
-#define BINYO_ALLOCA_N(type, n) ((type *)alloca(sizeof(type) * (n)))
-#define BINYO_REALLOC_N(ptr, type, n) ((ptr)=(type *)binyo_realloc_n((void *)(ptr), (n), sizeof(type)))
-#define BINYO_FREE binyo_free
-
-void *binyo_alloc(size_t size);
-void *binyo_alloc_n(size_t n, size_t size);
-void *binyo_realloc_n(void *ptr, size_t n, size_t size);
-void binyo_free(void *ptr);
+#ifdef _WIN32
+#define binyo_last_sys_error()	GetLastError()
+#define binyo_clear_sys_error()	SetLastError(0)
+#else
+#define binyo_last_sys_error()	errno
+#define binyo_clear_sys_error()	errno=0
+#endif
 
 /* include headers */
+#include "binyo-mem.h"
 #include "binyo-error.h"
+#include "binyo-error-internal.h"
 #include "binyo-io.h"
 #include "bytelist.h"
 #include "byte.h"

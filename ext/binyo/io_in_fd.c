@@ -72,7 +72,7 @@ int_fd_read(binyo_instream *instream, uint8_t *buf, size_t len)
     binyo_instream_fd *in;
 
     int_safe_cast(in, instream);
-    if (!buf) return -2;
+    if (!buf) return BINYO_IO_READ_ERR;
 
     fd = in->fd;
     binyo_clear_sys_error();
@@ -80,10 +80,10 @@ int_fd_read(binyo_instream *instream, uint8_t *buf, size_t len)
     
     if (r == -1) {
 	binyo_add_io_error();
-	return -2;
+	return BINYO_IO_READ_ERR; 
     }
     else if (r == 0) {
-	return -1;
+	return BINYO_IO_READ_EOF;
     }
     else {
     	return r;
@@ -100,7 +100,7 @@ int_fd_gets(binyo_instream *instream, char *line, size_t len)
     char *end = line + len;
 
     int_safe_cast(in, instream);
-    if (!line) return -2;
+    if (!line) return BINYO_IO_READ_ERR;
 
     fd = in->fd;
     binyo_clear_sys_error();
@@ -113,11 +113,11 @@ int_fd_gets(binyo_instream *instream, char *line, size_t len)
     }
 
     if (r == -1) {
-	return -2;
+	return BINYO_IO_READ_ERR;
     }
     
     if (ret == 0 && r == 0)
-	return -1;
+	return BINYO_IO_READ_EOF;
 
     if (*p == '\n' && *(p - 1) == '\r')
 	ret--;
@@ -137,8 +137,8 @@ int_fd_seek(binyo_instream *instream, off_t offset, int whence)
     off = lseek(fd, offset, whence);
 
     if (off == -1) 
-	return 0;
-    return 1;
+	return BINYO_ERR;
+    return BINYO_OK;
 }
 
 static void

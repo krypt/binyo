@@ -73,7 +73,7 @@ int_io_rb_read_impl(binyo_instream_io *in, VALUE vlen, VALUE vbuf, VALUE *out)
     rb_ary_push(args, vlen);
     rb_ary_push(args, vbuf);
     *out = rb_protect(int_io_rb_protected_read, args, &state);
-    return state == 0;
+    return state == 0 ? BINYO_OK : BINYO_ERR;
 }
 
 static ssize_t
@@ -84,7 +84,7 @@ int_io_read(binyo_instream *instream, uint8_t *buf, size_t len)
 
     int_safe_cast(in, instream);
 
-    if (!buf) return -2;
+    if (!buf) return BINYO_IO_READ_ERR;
 
     vlen = LONG2NUM(len);
     vbuf = rb_str_new2("");
@@ -92,11 +92,11 @@ int_io_read(binyo_instream *instream, uint8_t *buf, size_t len)
 
     if (!int_io_rb_read_impl(in, vlen, vbuf, &read)) {
 	binyo_error_add("Error while reading from IO");
-	return -2;
+	return BINYO_IO_READ_ERR;
     }
     
     if (NIL_P(read)) {
-	return -1;
+	return BINYO_IO_READ_EOF;
     }
     else {
 	ssize_t r = (ssize_t) RSTRING_LEN(read);
@@ -141,9 +141,9 @@ int_io_seek(binyo_instream *instream, off_t offset, int whence)
 
     io = in->io;
     whencesym = int_whence_sym_for(whence);
-    if (NIL_P(whencesym)) return 0;
+    if (NIL_P(whencesym)) return BINYO_ERR;
     rb_funcall(io, sBinyo_ID_SEEK, 2, LONG2NUM(offset), whencesym);
-    return 1;
+    return BINYO_OK;
 }
 
 static void
