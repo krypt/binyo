@@ -49,6 +49,7 @@ extern VALUE mBinyo;
 
 extern VALUE eBinyoError;
 void Init_binyo(void);
+void Init_binyo_io(void);
 
 #if defined(__cplusplus)
 }

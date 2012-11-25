@@ -50,7 +50,7 @@ end
 message "=== Checking Ruby features ===\n"
 
 have_header("ruby/io.h")
-
+have_func("rb_io_check_byte_readable")
 
 create_header
 create_makefile("binyo")

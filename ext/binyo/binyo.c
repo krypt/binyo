@@ -72,6 +72,7 @@ Init_binyo(void)
 
     eBinyoError = rb_define_class_under(mBinyo, "BinyoError", rb_eStandardError);
 
+    Init_binyo_io();
     Init_binyo_bytelist();
     Init_binyo_byte();
 }

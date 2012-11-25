@@ -18,7 +18,6 @@
 
 VALUE sBinyo_ID_SEEK_CUR, sBinyo_ID_SEEK_SET, sBinyo_ID_SEEK_END;
 ID sBinyo_ID_READ, sBinyo_ID_SEEK, sBinyo_ID_WRITE, sBinyo_ID_CLOSE;
-ID sBinyo_IV_IO, sBinyo_IV_IO_ADAPTER;
 
 void
 binyo_add_io_error(void)
@@ -296,7 +295,7 @@ binyo_outstream_new_value(VALUE value)
 /* end outstream */
 
 void
-Init_krypt_io(void)
+Init_binyo_io(void)
 {
     sBinyo_ID_SEEK = rb_intern("seek");
     sBinyo_ID_READ = rb_intern("read");
@@ -306,8 +305,5 @@ Init_krypt_io(void)
     sBinyo_ID_SEEK_CUR = rb_const_get(rb_cIO, rb_intern("SEEK_CUR"));
     sBinyo_ID_SEEK_SET = rb_const_get(rb_cIO, rb_intern("SEEK_SET"));
     sBinyo_ID_SEEK_END = rb_const_get(rb_cIO, rb_intern("SEEK_END"));
-
-    sBinyo_IV_IO = rb_intern("@io");
-    sBinyo_IV_IO_ADAPTER = rb_intern("@io_adapter");
 }
 
