@@ -12,7 +12,6 @@
 #define _BINYO_IO_BUFFER_H_
 
 #include <ruby.h>
-#include "binyo-error.h"
 
 #define BINYO_BYTE_BUFFER_GROWTH_FACTOR 2
 
