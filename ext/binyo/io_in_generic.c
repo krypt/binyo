@@ -84,7 +84,7 @@ int_io_read(binyo_instream *instream, uint8_t *buf, size_t len)
 
     int_safe_cast(in, instream);
 
-    if (!buf) return BINYO_IO_READ_ERR;
+    if (!buf) return BINYO_ERR;
 
     vlen = LONG2NUM(len);
     vbuf = rb_str_new2("");
@@ -92,11 +92,11 @@ int_io_read(binyo_instream *instream, uint8_t *buf, size_t len)
 
     if (!int_io_rb_read_impl(in, vlen, vbuf, &read)) {
 	binyo_error_add("Error while reading from IO");
-	return BINYO_IO_READ_ERR;
+	return BINYO_ERR;
     }
     
     if (NIL_P(read)) {
-	return BINYO_IO_READ_EOF;
+	return BINYO_IO_EOF;
     }
     else {
 	ssize_t r = (ssize_t) RSTRING_LEN(read);

@@ -72,18 +72,19 @@ int_bytes_read(binyo_instream *instream, uint8_t *buf, size_t len)
 
     int_safe_cast(in, instream);
 
-    if (!buf) return BINYO_IO_READ_ERR;
+    if (!buf) return BINYO_ERR;
 
     src = in->src;
 
     if (in->num_read == src->len)
-	return BINYO_IO_READ_EOF;
+	return BINYO_IO_EOF;
 
+    /* Check for SSIZE_MAX already done in io.c */
     to_read = src->len - in->num_read < len ? src->len - in->num_read : len;
     memcpy(buf, src->p, to_read);
     src->p += to_read;
     in->num_read += to_read;
-    return to_read;
+    return (ssize_t) to_read;
 }
 
 static ssize_t
@@ -100,12 +101,13 @@ int_bytes_gets(binyo_instream *instream, char *line, size_t len)
     src = in->src;
 
     if (in->num_read == src->len)
-	return BINYO_IO_READ_EOF;
+	return BINYO_IO_EOF;
 
     d = line;
     to_read = src->len - in->num_read < len ? src->len - in->num_read : len;
     end = d + to_read;
 
+    /* ret cannot exceed SSIZE_MAX, check for len already done in io.c */
     while (d < end) {
 	*d = *(src->p);    
 	src->p++;

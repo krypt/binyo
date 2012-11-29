@@ -72,7 +72,7 @@ int_fd_read(binyo_instream *instream, uint8_t *buf, size_t len)
     binyo_instream_fd *in;
 
     int_safe_cast(in, instream);
-    if (!buf) return BINYO_IO_READ_ERR;
+    if (!buf) return BINYO_ERR;
 
     fd = in->fd;
     binyo_clear_sys_error();
@@ -80,10 +80,10 @@ int_fd_read(binyo_instream *instream, uint8_t *buf, size_t len)
     
     if (r == -1) {
 	binyo_add_io_error();
-	return BINYO_IO_READ_ERR; 
+	return BINYO_ERR; 
     }
     else if (r == 0) {
-	return BINYO_IO_READ_EOF;
+	return BINYO_IO_EOF;
     }
     else {
     	return r;
@@ -100,7 +100,7 @@ int_fd_gets(binyo_instream *instream, char *line, size_t len)
     char *end = line + len;
 
     int_safe_cast(in, instream);
-    if (!line) return BINYO_IO_READ_ERR;
+    if (!line) return BINYO_ERR;
 
     fd = in->fd;
     binyo_clear_sys_error();
@@ -113,11 +113,11 @@ int_fd_gets(binyo_instream *instream, char *line, size_t len)
     }
 
     if (r == -1) {
-	return BINYO_IO_READ_ERR;
+	return BINYO_ERR;
     }
     
     if (ret == 0 && r == 0)
-	return BINYO_IO_READ_EOF;
+	return BINYO_IO_EOF;
 
     if (*p == '\n' && *(p - 1) == '\r')
 	ret--;

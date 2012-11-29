@@ -55,15 +55,13 @@ static ssize_t
 int_io_write(binyo_outstream *outstream, uint8_t *buf, size_t len)
 {
     VALUE vbuf, ret;
-    int w;
 
-    if (!buf) return BINYO_IO_WRITE_ERR;
+    if (!buf) return BINYO_ERR;
 
     vbuf = rb_str_new((const char *)buf, len);
-    w = int_io_rb_write(outstream, vbuf, &ret);
-    if (!w) {
+    if(int_io_rb_write(outstream, vbuf, &ret) == BINYO_ERR) {
 	binyo_error_add("Error while writing to IO");
-	return BINYO_IO_WRITE_ERR;
+	return BINYO_ERR;
     }
     return NUM2LONG(ret);
 }
