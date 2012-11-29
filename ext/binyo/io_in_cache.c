@@ -75,7 +75,7 @@ int_cache_read(binyo_instream *instream, uint8_t *buf, size_t len)
 
     int_safe_cast(in, instream);
 
-    if (!buf) return BINYO_IO_READ_ERR;
+    if (!buf) return BINYO_ERR;
 
     read = binyo_instream_read(in->inner, buf, len);
     if (read > 0)

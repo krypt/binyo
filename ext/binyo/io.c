@@ -41,15 +41,14 @@ int_read_all(binyo_instream *in, VALUE vbuf, VALUE *out)
     }
 
     xfree(buf);
-    if (r < -1) return 0;
+    if (r == BINYO_ERR) return BINYO_ERR;
     *out = vbuf;
-    return 1;
+    return BINYO_OK;
 }
 
 static int
 int_rb_read_generic(binyo_instream *in, VALUE vlen, VALUE vbuf, VALUE *out)
 {
-
     long len;
     size_t tlen;
     ssize_t r;
@@ -66,39 +65,39 @@ int_rb_read_generic(binyo_instream *in, VALUE vlen, VALUE vbuf, VALUE *out)
     len = NUM2LONG(vlen);
     if (len < 0) {
 	binyo_error_add("Negative length given");
-	return 0;
+	return BINYO_ERR;
     }
     if ((size_t) len > SIZE_MAX) {
 	binyo_error_add("Size too large: %ld", len);
-	return 0;
+	return BINYO_ERR;
     }
 
     tlen = (size_t) len;
     if (len == 0) {
 	rb_str_resize(vbuf, 0);
 	*out = vbuf;
-	return 1;
+	return BINYO_OK;
     }
 
     buf = ALLOC_N(uint8_t, tlen);
     r = binyo_instream_read(in, buf, tlen);
 
-    if (r == 0) {
+    if (r == BINYO_ERR) {
 	binyo_error_add("Error while reading from stream");
 	xfree(buf);
-	return 0;
+	return BINYO_ERR;
     }
-    else if (r == -1) {
+    else if (r == BINYO_IO_EOF) {
 	xfree(buf);
 	rb_str_resize(vbuf, 0);
 	*out = Qnil;
-	return 1;
+	return BINYO_OK;
     }
     else {
 	rb_str_buf_cat(vbuf, (const char *)buf, r);
 	xfree(buf);
 	*out = vbuf;
-	return 1;
+	return BINYO_OK;
     }
 }
 
@@ -122,7 +121,7 @@ binyo_instream_read(binyo_instream *in, uint8_t *buf, size_t len)
 
     if (len > SSIZE_MAX) {
 	binyo_error_add("Size too large: %ld", len);
-	return -2;
+	return BINYO_ERR;
     }
     return in->methods->read(in, buf, len);
 }
@@ -134,7 +133,7 @@ int_gets_generic(binyo_instream *in, char *line, size_t len)
     char *p = line;
     char *end = line + len;
 
-    if (!line) return -2;
+    if (!line) return BINYO_ERR;
 
     while (p < end) {
 	if ((r = in->methods->read(in, (uint8_t *) p, 1)) < 0)
@@ -147,9 +146,8 @@ int_gets_generic(binyo_instream *in, char *line, size_t len)
 	}
     }
 
-    if (r < -1) return -2;
-    if (ret == 0 && r == -1)
-	return -1;
+    if (r == BINYO_ERR) return BINYO_ERR;
+    if (ret == 0 && r == BINYO_IO_EOF) return BINYO_IO_EOF;
 
     /* normalize CRLF */
     if (*p == '\n' && *(p - 1) == '\r')
@@ -164,7 +162,7 @@ binyo_instream_gets(binyo_instream *in, char *line, size_t len)
     int_check_stream(in);
     if (len > SSIZE_MAX) {
 	binyo_error_add("Size too large: %ld", len);
-	return -2;
+	return BINYO_ERR;
     }
     if (in->methods->gets) {
 	return in->methods->gets(in, line, len);
@@ -235,7 +233,7 @@ binyo_outstream_write(binyo_outstream *out, uint8_t *buf, size_t len)
     int_check_stream_has(out, write);
     if (len > SSIZE_MAX) {
 	binyo_error_add("Size too large: %ld", len);
-	return -1;
+	return BINYO_ERR;
     }
     return out->methods->write(out, buf, len);
 }
@@ -251,12 +249,12 @@ binyo_outstream_rb_write(binyo_outstream *out, VALUE vbuf, VALUE *ret)
     else {
 	ssize_t w;
 	w = binyo_outstream_write(out, (uint8_t *) RSTRING_PTR(vbuf), RSTRING_LEN(vbuf));
-	if (w < 0) {
+	if (w == BINYO_ERR) {
 	    binyo_error_add("Error while writing to stream");
-	    return 0;
+	    return BINYO_ERR;
 	}
 	*ret = LONG2NUM(w);
-	return 1;
+	return BINYO_OK;
     }
 }
 

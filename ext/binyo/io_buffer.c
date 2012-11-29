@@ -79,13 +79,13 @@ int_buffer_grow(binyo_byte_buffer *buffer, size_t cur_len)
 ssize_t
 binyo_buffer_write(binyo_byte_buffer *buffer, uint8_t *b, size_t len)
 {
-    if (!b) return BINYO_IO_WRITE_ERR;
+    if (!b) return BINYO_ERR;
     if (len == 0) return 0;
-    if (len > SSIZE_MAX) return BINYO_IO_WRITE_ERR;
+    if (len > SSIZE_MAX) return BINYO_ERR;
 
     if (buffer->limit - buffer->size < len) {
-	if (!int_buffer_grow(buffer, len))
-	    return BINYO_IO_WRITE_ERR;
+	if (int_buffer_grow(buffer, len) == BINYO_ERR)
+	    return BINYO_ERR;
     }
 
     memcpy(buffer->data + buffer->size, b, len);
