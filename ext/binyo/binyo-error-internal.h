@@ -16,7 +16,6 @@ void binyo_error_add(const char *format, ...);
 
 VALUE binyo_error_create(VALUE exception_class, const char *format, ...);
 void binyo_error_raise(VALUE exception_class, const char *format, ...);
-void binyo_error_clear(void);
 
 #endif /* BINYO_ERROR_INTERNAL_H */
 
