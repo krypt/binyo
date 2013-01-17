@@ -2,7 +2,7 @@ Gem::Specification.new do |s|
   s.name = 'binyo'
   s.version = '0.0.1'
   s.author = 'Martin Bosslet'
-  s.email = 'Martin.Bosslet@googlemail.com'
+  s.email = 'Martin.Bosslet@gmail.com'
   s.homepage = 'https://github.com/krypt/binyo'
   s.summary = 'Binary IO for C-based Rubies'
   s.extensions << 'ext/binyo/extconf.rb'

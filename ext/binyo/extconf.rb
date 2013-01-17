@@ -4,8 +4,8 @@
 
 binyo - Fast binary IO for Ruby
 
-Copyright (C) 2012
-Martin Bosslet <martin.bosslet@googlemail.com>
+Copyright (C) 2012-2013
+Martin Bosslet <martin.bosslet@gmail.com>
 All rights reserved.
 
 = License
