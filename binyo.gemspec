@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 
   s.name = 'binyo'
-  s.version = '0.0.1'
+  s.version = '0.0.2.rc1'
 
   s.author = 'Martin Bosslet'
   s.email = 'Martin.Bosslet@gmail.com'
