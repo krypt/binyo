@@ -1,7 +1,11 @@
+$:.unshift File.expand_path('../lib', __FILE__)
+
+require 'binyo/version'
+
 Gem::Specification.new do |s|
 
   s.name = 'binyo'
-  s.version = '0.0.2.rc1'
+  s.version = Binyo::VERSION
 
   s.author = 'Martin Bosslet'
   s.email = 'Martin.Bosslet@gmail.com'
